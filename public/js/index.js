@@ -19,11 +19,18 @@ const checkConnectedStatus = async function () {
 
 const showBalanceSum = async function () {
 	document.querySelector("#getBalance").disabled = true;
+	document.querySelector("#output").textContent = `Your balance is loading`;
 
-	const balance = await getBalance();
-	document.querySelector(
-		"#output"
-	).textContent = `Your balance is ${JSON.stringify(balance)} USD`;
+  try{
+    const balance = await getBalance();
+    document.querySelector(
+      "#output"
+    ).textContent = `Your balance is ${JSON.stringify(balance)} USD`;
+    document.querySelector("#getBalance").disabled = false;
+  }
+  catch (e) {
+    document.querySelector("#output").textContent = `Error loading the balance!`;
+  }
 };
 
 const getBalance = async function () {
@@ -35,7 +42,7 @@ const getBalance = async function () {
 		0
 	);
 
-  return balance;
+	return balance;
 };
 
 /**
@@ -73,26 +80,25 @@ const showInstitutionName = async function () {
 };
 
 // Grab a list of most recent transactions
-const getTransactions = async function () {
-	showBalanceSum();
-	const transactionResponse = await fetch(`/api/transactions`);
-	const transactionData = await transactionResponse.json();
-	const simplifiedData = transactionData.transactions.map((item) => {
-		return {
-			date: item.date,
-			name: item.name,
-			amount: `$${item.amount.toFixed(2)}`,
-			categories: item.category.join(", "),
-		};
-	});
-	console.table(simplifiedData);
-	document.querySelector("#output").textContent =
-		JSON.stringify(simplifiedData);
-};
+// const getTransactions = async function () {
+// 	const transactionResponse = await fetch(`/api/transactions`);
+// 	const transactionData = await transactionResponse.json();
+// 	const simplifiedData = transactionData.transactions.map((item) => {
+// 		return {
+// 			date: item.date,
+// 			name: item.name,
+// 			amount: `$${item.amount.toFixed(2)}`,
+// 			categories: item.category.join(", "),
+// 		};
+// 	});
+// 	console.table(simplifiedData);
+// 	document.querySelector("#output").textContent =
+// 		JSON.stringify(simplifiedData);
+// };
 
-document
-	.querySelector("#getTransactions")
-	.addEventListener("click", getTransactions);
+// document
+// 	.querySelector("#getTransactions")
+// 	.addEventListener("click", getTransactions);
 
 document.querySelector("#getBalance").addEventListener("click", showBalanceSum);
 
